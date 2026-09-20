@@ -420,6 +420,7 @@ function App() {
                 </button>
               </div>
               <h3>Latest price observations for {selected.name}</h3>
+              <PriceChart rows={history} productName={selected.name} />
               <Rows rows={history} />
             </>
           ) : (
@@ -475,7 +476,10 @@ function App() {
               <p>Open a tracked product from Browse products first.</p>
             </div>
           ) : (
-            <Rows rows={history} />
+            <>
+              <PriceChart rows={history} productName={selected.name} />
+              <Rows rows={history} />
+            </>
           )}
         </section>
       )}
@@ -629,6 +633,160 @@ function App() {
         </div>
       )}
     </main>
+  );
+}
+function PriceChart({ rows, productName }) {
+  const points = rows
+    .filter((row) => row.price_cents != null || row.price != null)
+    .map((row) => ({
+      price: row.price_cents ?? row.price,
+      date: row.scraped_at || row.started_at || row.created_at,
+      currency: row.currency || "INR",
+    }))
+    .filter((row) => Number.isFinite(Number(row.price)))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  if (!points.length) {
+    return (
+      <div className="chart-empty">
+        <span className="chart-empty-icon">↗</span>
+        <div>
+          <strong>Price trend will appear after a successful scrape</strong>
+          <p>There are no valid price observations for {productName} yet.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const width = 760;
+  const height = 260;
+  const padding = { top: 28, right: 24, bottom: 42, left: 64 };
+  const values = points.map((point) => Number(point.price));
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || Math.max(max * 0.1, 100);
+  const x = (index) =>
+    padding.left +
+    (index * (width - padding.left - padding.right)) /
+      Math.max(points.length - 1, 1);
+  const y = (value) =>
+    padding.top +
+    ((max - value) * (height - padding.top - padding.bottom)) / range;
+  const path = points
+    .map((point, index) => `${index ? "L" : "M"} ${x(index)} ${y(point.price)}`)
+    .join(" ");
+  const first = values[0];
+  const latest = values[values.length - 1];
+  const change = latest - first;
+  const changePercent = first ? (change / first) * 100 : 0;
+  const formatPrice = (value) =>
+    `${points[points.length - 1].currency} ${(value / 100).toLocaleString(
+      undefined,
+      { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+    )}`;
+  const formatDate = (value) =>
+    new Date(value).toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
+  const gridValues = [max, max - range / 2, min];
+
+  return (
+    <section
+      className="price-chart"
+      aria-label={`Price trend for ${productName}`}
+    >
+      <div className="chart-header">
+        <div>
+          <span className="eyebrow">PRICE TREND</span>
+          <h3>{productName}</h3>
+          <p>
+            {points.length} verified observation
+            {points.length === 1 ? "" : "s"} over time
+          </p>
+        </div>
+        <div className="chart-summary">
+          <strong>{formatPrice(latest)}</strong>
+          <span
+            className={
+              change > 0
+                ? "price-up"
+                : change < 0
+                  ? "price-down"
+                  : "price-flat"
+            }
+          >
+            {change === 0
+              ? "No change"
+              : `${change > 0 ? "+" : ""}${changePercent.toFixed(1)}% since first check`}
+          </span>
+        </div>
+      </div>
+      <div className="chart-scroll">
+        <svg
+          className="price-chart-svg"
+          viewBox={`0 0 ${width} ${height}`}
+          role="img"
+          aria-label={`Price changed from ${formatPrice(first)} to ${formatPrice(latest)}`}
+        >
+          {gridValues.map((value, index) => (
+            <g key={value}>
+              <line
+                className="chart-gridline"
+                x1={padding.left}
+                x2={width - padding.right}
+                y1={y(value)}
+                y2={y(value)}
+              />
+              <text
+                className="chart-axis-label"
+                x={padding.left - 10}
+                y={y(value) + 4}
+                textAnchor="end"
+              >
+                {formatPrice(value)}
+              </text>
+            </g>
+          ))}
+          <line
+            className="chart-axis"
+            x1={padding.left}
+            x2={width - padding.right}
+            y1={height - padding.bottom}
+            y2={height - padding.bottom}
+          />
+          <path className="chart-line" d={path} />
+          {points.map((point, index) => (
+            <circle
+              className="chart-point"
+              key={`${point.date}-${index}`}
+              cx={x(index)}
+              cy={y(point.price)}
+              r={index === points.length - 1 ? 5 : 4}
+            >
+              <title>
+                {`${formatPrice(point.price)} · ${new Date(point.date).toLocaleString()}`}
+              </title>
+            </circle>
+          ))}
+          <text
+            className="chart-date-label"
+            x={padding.left}
+            y={height - 14}
+          >
+            {formatDate(points[0].date)}
+          </text>
+          <text
+            className="chart-date-label"
+            x={width - padding.right}
+            y={height - 14}
+            textAnchor="end"
+          >
+            {formatDate(points[points.length - 1].date)}
+          </text>
+        </svg>
+      </div>
+    </section>
   );
 }
 function Rows({ rows }) {

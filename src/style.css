@@ -86,6 +86,21 @@ html[data-theme="dark"] .scope-badge {
   background: #26335f;
   color: #c5ceff;
 }
+html[data-theme="dark"] .price-chart,
+html[data-theme="dark"] .chart-empty {
+  background: #121c2a;
+  border-color: #30415a;
+}
+html[data-theme="dark"] .chart-gridline {
+  stroke: #2b394e;
+}
+html[data-theme="dark"] .chart-axis-label,
+html[data-theme="dark"] .chart-date-label,
+html[data-theme="dark"] .chart-header p,
+html[data-theme="dark"] .chart-empty p {
+  fill: #8c9bb0;
+  color: #8c9bb0;
+}
 button,
 input {
   font: inherit;
@@ -420,6 +435,110 @@ nav button.active {
   color: #98a2b3;
   font-size: 0.7rem;
   text-align: right;
+}
+.price-chart {
+  margin: 24px 0 12px;
+  padding: 20px;
+  border: 1px solid #e8eaf0;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #fbfcff, #f5f7ff);
+}
+.chart-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.chart-header h3 {
+  margin: 4px 0 4px;
+  font-size: 1.05rem;
+}
+.chart-header p,
+.chart-empty p {
+  margin: 0;
+  color: #667085;
+  font-size: 0.82rem;
+}
+.chart-summary {
+  display: grid;
+  gap: 5px;
+  text-align: right;
+}
+.chart-summary strong {
+  font-size: 1.35rem;
+}
+.chart-summary span {
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+.price-up {
+  color: #d92d20;
+}
+.price-down {
+  color: #079455;
+}
+.price-flat {
+  color: #667085;
+}
+.chart-scroll {
+  overflow-x: auto;
+  margin-top: 14px;
+}
+.price-chart-svg {
+  display: block;
+  width: 100%;
+  min-width: 600px;
+  height: auto;
+}
+.chart-gridline {
+  stroke: #e5e9f2;
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+}
+.chart-axis {
+  stroke: #cbd5e1;
+  stroke-width: 1;
+}
+.chart-axis-label,
+.chart-date-label {
+  fill: #98a2b3;
+  font-size: 11px;
+}
+.chart-line {
+  fill: none;
+  stroke: #5572ff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.chart-point {
+  fill: #fff;
+  stroke: #5572ff;
+  stroke-width: 3;
+}
+.chart-empty {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0 12px;
+  padding: 22px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  background: #fbfcff;
+}
+.chart-empty strong {
+  display: block;
+  margin-bottom: 5px;
+}
+.chart-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: #5572ff;
+  background: #eaf0ff;
+  font-size: 1.5rem;
 }
 .card-actions {
   display: flex;

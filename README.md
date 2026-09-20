@@ -1,4 +1,4 @@
-# Product Price Tracker
+#SwiftScrape
 
 Tracks only `https://demo.inelabteamdev.com/`; metadata uses its JSON API and prices use Playwright.
 

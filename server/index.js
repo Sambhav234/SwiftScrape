@@ -299,9 +299,11 @@ function cronHandler(req, r) {
     req.get("x-cron-secret") !== process.env.CRON_SECRET
   )
     return r.status(401).json({ error: "Unauthorized" });
-  if (running) return r.status(202).json({ accepted: true, skipped: true });
+  r.set("Cache-Control", "no-store");
+  r.set("Content-Length", "8");
+  if (running) return r.status(202).type("text/plain").send("accepted");
   scrape().catch((e) => console.error(e));
-  r.status(202).json({ accepted: true });
+  return r.status(202).type("text/plain").send("accepted");
 }
 
 app.post("/api/cron/scrape", cronHandler);

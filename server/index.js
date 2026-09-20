@@ -37,9 +37,11 @@ let running = false,
   catalogCache = null,
   catalogCacheAt = 0;
 
-app.get("/api/health", (_, r) =>
-  r.json({ ok: true, service: "price-tracker", scrapeRunning: running }),
-);
+app.get("/api/health", (req, r) => {
+  // Support a bare health probe with no body to keep cron/health pings small
+  if (req.query.bare) return r.sendStatus(204);
+  return r.json({ ok: true, service: "price-tracker", scrapeRunning: running });
+});
 app.get("/health", (_, r) => r.redirect("/api/health"));
 
 app.get("/api/search", async (req, res) => {

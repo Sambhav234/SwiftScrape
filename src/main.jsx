@@ -24,7 +24,7 @@ function App() {
       () => localStorage.getItem("pricepulse-theme") || "light",
     );
   useEffect(() => {
-    document.title = "PricePulse | Track product prices with confidence";
+    document.title = "SwiftScrape | Track product prices with confidence";
   }, []);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;

@@ -214,7 +214,7 @@ function App() {
     <main>
       <header>
         <div>
-          <p className="eyebrow">PRICEPULSE · PRODUCT PRICE TRACKER</p>
+          <p className="eyebrow">SwiftScrape · PRODUCT PRICE TRACKER</p>
           <h1>Know the price before it moves.</h1>
           <p className="sub">
             Search the catalog, save products you care about, and see verified
